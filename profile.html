@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรไฟล์</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+ 
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Noto Sans Thai', sans-serif;
+    background: #F4F7FC;
+    color: #1B2430;
+    display: flex;
+  }
+ 
+  h1, h2, h3 { font-family: 'Kanit', sans-serif; margin: 0; }
+ 
+  /* ---------- Sidebar (shared) ---------- */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #E3E8F0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 8px 24px; margin-bottom: 16px;
+    border-bottom: 1px solid #EEF2F8;
+  }
+  .brand .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #2F6FED, #14A38A);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .brand .logo svg { width: 18px; height: 18px; }
+  .brand span { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 15px; color: #1B2430; }
+ 
+  nav.nav-list { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 10px;
+    color: #4B5768; font-size: 14px; font-weight: 500;
+    text-decoration: none; cursor: pointer;
+  }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .nav-item:hover { background: #F0F5FF; color: #2F6FED; }
+  .nav-item.active { background: #2F6FED; color: #fff; }
+ 
+  .nav-logout {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 10px;
+    color: #8A5A5A; font-size: 14px; font-weight: 500; cursor: pointer;
+    border-top: 1px solid #EEF2F8; margin-top: 8px; padding-top: 16px;
+  }
+  .nav-logout svg { width: 18px; height: 18px; }
+  .nav-logout:hover { color: #D64545; }
+ 
+  /* ---------- Main ---------- */
+  main { flex: 1; padding: 28px 36px 48px; max-width: 760px; }
+ 
+  .topbar h2 { font-size: 22px; color: #1B2430; margin-bottom: 22px; }
+ 
+  /* ---------- Profile header card ---------- */
+  .profile-card {
+    background: #fff;
+    border: 1px solid #E3E8F0;
+    border-radius: 16px;
+    padding: 26px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .avatar-lg {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, #FBBF24, #F472B6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; font-size: 22px;
+    flex-shrink: 0;
+  }
+  .profile-name { font-size: 18px; font-weight: 700; color: #1B2430; margin-bottom: 4px; }
+  .profile-email { font-size: 13.5px; color: #6B7686; margin-bottom: 8px; }
+  .role-badge {
+    font-size: 12px; font-weight: 600; padding: 5px 12px;
+    border-radius: 999px; white-space: nowrap; display: inline-block;
+  }
+  .role-badge.admin { background: #FFF4E0; color: #B4790A; }
+  .role-badge.user { background: #EEF2F8; color: #4B5768; }
+ 
+  /* ---------- Stat row ---------- */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #E3E8F0;
+    border-radius: 16px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'Kanit', sans-serif; font-size: 20px; font-weight: 700; color: #1B2430; }
+  .stat-label { font-size: 12.5px; color: #6B7686; margin-top: 4px; }
+ 
+  /* ---------- Edit form card ---------- */
+  .form-card {
+    background: #fff;
+    border: 1px solid #E3E8F0;
+    border-radius: 16px;
+    padding: 24px 26px;
+  }
+  .form-card h3 { font-size: 15px; margin-bottom: 16px; }
+ 
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 14px; font-weight: 500; color: #1B2430; margin-bottom: 6px; }
+  .field input {
+    width: 100%;
+    border: 1px solid #E3E8F0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1B2430;
+    background: #F8FAFD;
+  }
+  .field input:focus { outline: none; border-color: #2F6FED; background: #fff; }
+  .field input:disabled { color: #8A99B3; cursor: not-allowed; }
+  .field .hint { font-size: 12px; color: #8A99B3; margin-top: 4px; }
+ 
+  .notice {
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .notice.success { background: #E7F7F1; color: #14A38A; border: 1px solid #BFE9DA; }
+  .notice.error { background: #FDECEC; color: #D64545; border: 1px solid #F7C9C9; }
+ 
+  .btn-save {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #2F6FED;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .btn-save:hover { background: #1F4FC4; }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+ 
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    main { padding: 20px; }
+    .profile-card { flex-direction: column; text-align: center; }
+    .stat-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.5 1.33 9.6 3.55 11.8L12 20.24l8.45-8.44c2.22-2.2 2.09-5.3.19-7.22Z"></path>
+        </svg>
+      </div>
+      <span>ACTIHUB</span>
+    </div>
+ 
+    <nav class="nav-list">
+      <a class="nav-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"></path><path d="M5 10v10h14V10"></path></svg>
+        หน้าหลัก
+      </a>
+      <a class="nav-item" href="browse-activities.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        รับงานอาสา
+      </a>
+      <a class="nav-item" href="log-hours.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path><path d="M12 8v4l3 2"></path></svg>
+        บันทึกชั่วโมง
+      </a>
+      <a class="nav-item" href="hour-history.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"></path><path d="M3.05 13a9 9 0 1 0 .5-4.5L3 8"></path><path d="M12 7v5l3 3"></path></svg>
+        ประวัติชั่วโมง
+      </a>
+      <a class="nav-item active" href="profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        โปรไฟล์
+      </a>
+      <a class="nav-item" href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+        ตั้งค่า
+      </a>
+      <a class="nav-item" id="adminLink" href="admin-review-hours.html" style="display:none; color:#B4790A;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 3.8 9 9 10 5.2-1 9-5 9-10V6l-9-4Z"></path></svg>
+        แผงควบคุมแอดมิน
+      </a>
+    </nav>
+ 
+    <div class="nav-logout" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+      ออกจากระบบ
+    </div>
+  </aside>
+ 
+  <main>
+    <div class="topbar"><h2>โปรไฟล์</h2></div>
+ 
+    <div class="profile-card">
+      <div class="avatar-lg" id="avatarLg">--</div>
+      <div>
+        <div class="profile-name" id="profileName">กำลังโหลด...</div>
+        <div class="profile-email" id="profileEmail">--</div>
+        <span class="role-badge user" id="profileRole">ผู้ใช้ทั่วไป</span>
+      </div>
+    </div>
+ 
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statHours">--</div>
+        <div class="stat-label">ชั่วโมงสะสม</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statTarget">--</div>
+        <div class="stat-label">เป้าหมาย (ชม.)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statActivities">--</div>
+        <div class="stat-label">กิจกรรมที่เข้าร่วม</div>
+      </div>
+    </div>
+ 
+    <div class="form-card">
+      <h3>แก้ไขข้อมูลส่วนตัว</h3>
+ 
+      <div class="notice success" id="successNotice">บันทึกข้อมูลเรียบร้อยแล้ว</div>
+      <div class="notice error" id="errorNotice"></div>
+ 
+      <form id="profileForm">
+        <div class="field">
+          <label for="nameInput">ชื่อ-นามสกุล</label>
+          <input type="text" id="nameInput" placeholder="กรอกชื่อ-นามสกุล">
+        </div>
+        <div class="field">
+          <label for="emailInput">อีเมล</label>
+          <input type="email" id="emailInput" disabled>
+          <p class="hint">อีเมลใช้สำหรับเข้าสู่ระบบ ไม่สามารถแก้ไขได้ที่นี่</p>
+        </div>
+        <button type="submit" class="btn-save" id="saveBtn">บันทึกการเปลี่ยนแปลง</button>
+      </form>
+    </div>
+  </main>
+ 
+  <script type="module">
+    import { auth, db, onAuthStateChanged, signOut, doc, getDoc, updateDoc, collection, query, where, getDocs } from './firebase-init.js';
+ 
+    document.querySelector('.nav-logout').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+ 
+    const successNotice = document.getElementById('successNotice');
+    const errorNotice = document.getElementById('errorNotice');
+ 
+    function showSuccess() {
+      errorNotice.style.display = 'none';
+      successNotice.style.display = 'block';
+      setTimeout(() => { successNotice.style.display = 'none'; }, 3000);
+    }
+    function showError(msg) {
+      successNotice.style.display = 'none';
+      errorNotice.textContent = msg;
+      errorNotice.style.display = 'block';
+    }
+ 
+    let currentUid = null;
+ 
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUid = user.uid;
+ 
+      try {
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        const userData = userSnap.exists() ? userSnap.data() : { name: user.email, email: user.email, totalHours: 0, targetHours: 60, role: 'user' };
+ 
+        if (userData.role === 'admin') {
+          document.getElementById('adminLink').style.display = 'flex';
+        }
+ 
+        const displayName = userData.name || user.email;
+        document.getElementById('avatarLg').textContent = displayName.slice(0, 2);
+        document.getElementById('profileName').textContent = displayName;
+        document.getElementById('profileEmail').textContent = userData.email || user.email;
+        document.getElementById('nameInput').value = userData.name || '';
+        document.getElementById('emailInput').value = userData.email || user.email;
+ 
+        const roleEl = document.getElementById('profileRole');
+        if (userData.role === 'admin') {
+          roleEl.textContent = 'แอดมิน';
+          roleEl.className = 'role-badge admin';
+        } else {
+          roleEl.textContent = 'ผู้ใช้ทั่วไป';
+          roleEl.className = 'role-badge user';
+        }
+ 
+        document.getElementById('statHours').textContent = `${userData.totalHours || 0} ชม.`;
+        document.getElementById('statTarget').textContent = `${userData.targetHours || 60} ชม.`;
+ 
+        const logsSnap = await getDocs(query(collection(db, 'hourLogs'), where('userId', '==', user.uid)));
+        document.getElementById('statActivities').textContent = logsSnap.size;
+      } catch (err) {
+        showError('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+        console.error(err);
+      }
+    });
+ 
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveBtn');
+      const name = document.getElementById('nameInput').value.trim();
+ 
+      if (!name) {
+        showError('กรุณากรอกชื่อ-นามสกุล');
+        return;
+      }
+ 
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'กำลังบันทึก...';
+ 
+      try {
+        await updateDoc(doc(db, 'users', currentUid), { name });
+        document.getElementById('profileName').textContent = name;
+        document.getElementById('avatarLg').textContent = name.slice(0, 2);
+        showSuccess();
+      } catch (err) {
+        showError('บันทึกไม่สำเร็จ: ' + err.message);
+        console.error(err);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'บันทึกการเปลี่ยนแปลง';
+      }
+    });
+  </script>
+ 
+</body>
+</html>
+ 

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตั้งค่า</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+ 
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Noto Sans Thai', sans-serif;
+    background: #F4F7FC;
+    color: #1B2430;
+    display: flex;
+  }
+ 
+  h1, h2, h3 { font-family: 'Kanit', sans-serif; margin: 0; }
+ 
+  /* ---------- Sidebar (shared) ---------- */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #E3E8F0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 8px 24px; margin-bottom: 16px;
+    border-bottom: 1px solid #EEF2F8;
+  }
+  .brand .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #2F6FED, #14A38A);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .brand .logo svg { width: 18px; height: 18px; }
+  .brand span { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 15px; color: #1B2430; }
+ 
+  nav.nav-list { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 10px;
+    color: #4B5768; font-size: 14px; font-weight: 500;
+    text-decoration: none; cursor: pointer;
+  }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .nav-item:hover { background: #F0F5FF; color: #2F6FED; }
+  .nav-item.active { background: #2F6FED; color: #fff; }
+ 
+  .nav-logout {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 10px;
+    color: #8A5A5A; font-size: 14px; font-weight: 500; cursor: pointer;
+    border-top: 1px solid #EEF2F8; margin-top: 8px; padding-top: 16px;
+  }
+  .nav-logout svg { width: 18px; height: 18px; }
+  .nav-logout:hover { color: #D64545; }
+ 
+  /* ---------- Main ---------- */
+  main { flex: 1; padding: 28px 36px 48px; max-width: 760px; }
+ 
+  .topbar h2 { font-size: 22px; color: #1B2430; margin-bottom: 22px; }
+ 
+  .section-card {
+    background: #fff;
+    border: 1px solid #E3E8F0;
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 20px;
+  }
+  .section-card h3 { font-size: 15px; margin-bottom: 4px; }
+  .section-card .section-sub { font-size: 13px; color: #6B7686; margin: 0 0 18px; }
+ 
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 14px; font-weight: 500; color: #1B2430; margin-bottom: 6px; }
+  .field input {
+    width: 100%;
+    border: 1px solid #E3E8F0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1B2430;
+    background: #F8FAFD;
+  }
+  .field input:focus { outline: none; border-color: #2F6FED; background: #fff; }
+  .field .hint { font-size: 12px; color: #8A99B3; margin-top: 4px; }
+ 
+  /* ---------- Toggle rows ---------- */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid #EEF2F8;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-row-text .t-title { font-size: 14px; font-weight: 500; color: #1B2430; }
+  .toggle-row-text .t-sub { font-size: 12.5px; color: #6B7686; margin-top: 2px; }
+ 
+  .switch { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #E3E8F0; border-radius: 999px; transition: 0.15s;
+  }
+  .switch .slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: 0.15s;
+  }
+  .switch input:checked + .slider { background: #2F6FED; }
+  .switch input:checked + .slider:before { transform: translateX(18px); }
+ 
+  .notice {
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .notice.success { background: #E7F7F1; color: #14A38A; border: 1px solid #BFE9DA; }
+  .notice.error { background: #FDECEC; color: #D64545; border: 1px solid #F7C9C9; }
+ 
+  .btn-save {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #2F6FED;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .btn-save:hover { background: #1F4FC4; }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+ 
+  .btn-danger {
+    padding: 11px 22px;
+    border: 1px solid #F7C9C9;
+    border-radius: 10px;
+    background: #fff;
+    color: #D64545;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .btn-danger:hover { background: #FDECEC; }
+ 
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    main { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.5 1.33 9.6 3.55 11.8L12 20.24l8.45-8.44c2.22-2.2 2.09-5.3.19-7.22Z"></path>
+        </svg>
+      </div>
+      <span>ACTIHUB</span>
+    </div>
+ 
+    <nav class="nav-list">
+      <a class="nav-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"></path><path d="M5 10v10h14V10"></path></svg>
+        หน้าหลัก
+      </a>
+      <a class="nav-item" href="browse-activities.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        รับงานอาสา
+      </a>
+      <a class="nav-item" href="log-hours.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"></path><path d="M12 8v4l3 2"></path></svg>
+        บันทึกชั่วโมง
+      </a>
+      <a class="nav-item" href="hour-history.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"></path><path d="M3.05 13a9 9 0 1 0 .5-4.5L3 8"></path><path d="M12 7v5l3 3"></path></svg>
+        ประวัติชั่วโมง
+      </a>
+      <a class="nav-item" href="profile.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        โปรไฟล์
+      </a>
+      <a class="nav-item active" href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+        ตั้งค่า
+      </a>
+      <a class="nav-item" id="adminLink" href="admin-review-hours.html" style="display:none; color:#B4790A;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 3.8 9 9 10 5.2-1 9-5 9-10V6l-9-4Z"></path></svg>
+        แผงควบคุมแอดมิน
+      </a>
+    </nav>
+ 
+    <div class="nav-logout" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+      ออกจากระบบ
+    </div>
+  </aside>
+ 
+  <main>
+    <div class="topbar"><h2>ตั้งค่า</h2></div>
+ 
+    <!-- เป้าหมายชั่วโมงอาสา -->
+    <div class="section-card">
+      <h3>เป้าหมายชั่วโมงอาสา</h3>
+      <p class="section-sub">กำหนดจำนวนชั่วโมงอาสาที่ต้องการทำให้สำเร็จ</p>
+ 
+      <div class="notice success" id="goalSuccess">บันทึกเป้าหมายเรียบร้อยแล้ว</div>
+      <div class="notice error" id="goalError"></div>
+ 
+      <form id="goalForm">
+        <div class="field">
+          <label for="targetInput">เป้าหมาย (ชั่วโมง)</label>
+          <input type="number" id="targetInput" min="1" step="1">
+        </div>
+        <button type="submit" class="btn-save" id="goalSaveBtn">บันทึกเป้าหมาย</button>
+      </form>
+    </div>
+ 
+    <!-- การแจ้งเตือน -->
+    <div class="section-card">
+      <h3>การแจ้งเตือน</h3>
+      <p class="section-sub">เลือกสิ่งที่ต้องการให้แจ้งเตือน</p>
+ 
+      <div class="toggle-row">
+        <div class="toggle-row-text">
+          <div class="t-title">งานอาสาใหม่ที่ตรงกับความสนใจ</div>
+          <div class="t-sub">แจ้งเตือนเมื่อมีงานอาสาใหม่เปิดรับ</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="notifNewActivity" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-row-text">
+          <div class="t-title">ผลการตรวจสอบชั่วโมง</div>
+          <div class="t-sub">แจ้งเตือนเมื่อชั่วโมงที่บันทึกได้รับการอนุมัติ/ไม่อนุมัติ</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="notifHourReview" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+ 
+    <!-- เปลี่ยนรหัสผ่าน -->
+    <div class="section-card">
+      <h3>เปลี่ยนรหัสผ่าน</h3>
+      <p class="section-sub">กรอกรหัสผ่านปัจจุบันและรหัสผ่านใหม่</p>
+ 
+      <div class="notice success" id="pwSuccess">เปลี่ยนรหัสผ่านเรียบร้อยแล้ว</div>
+      <div class="notice error" id="pwError"></div>
+ 
+      <form id="passwordForm">
+        <div class="field">
+          <label for="currentPassword">รหัสผ่านปัจจุบัน</label>
+          <input type="password" id="currentPassword" placeholder="กรอกรหัสผ่านปัจจุบัน">
+        </div>
+        <div class="field">
+          <label for="newPassword">รหัสผ่านใหม่</label>
+          <input type="password" id="newPassword" placeholder="อย่างน้อย 6 ตัวอักษร">
+          <p class="hint">ต้องมีอย่างน้อย 6 ตัวอักษร</p>
+        </div>
+        <button type="submit" class="btn-save" id="pwSaveBtn">เปลี่ยนรหัสผ่าน</button>
+      </form>
+    </div>
+ 
+    <!-- ออกจากระบบทุกอุปกรณ์ -->
+    <div class="section-card">
+      <h3>ออกจากระบบ</h3>
+      <p class="section-sub">ออกจากระบบจากอุปกรณ์นี้</p>
+      <button type="button" class="btn-danger" id="signOutBtn">ออกจากระบบ</button>
+    </div>
+  </main>
+ 
+  <script type="module">
+    import { auth, db, onAuthStateChanged, signOut, doc, getDoc, updateDoc } from './firebase-init.js';
+    import {
+      EmailAuthProvider,
+      reauthenticateWithCredential,
+      updatePassword,
+    } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+ 
+    document.querySelector('.nav-logout').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+ 
+    function flash(successEl, errorEl, ok, msg) {
+      if (ok) {
+        errorEl.style.display = 'none';
+        successEl.style.display = 'block';
+        setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+      } else {
+        successEl.style.display = 'none';
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+      }
+    }
+ 
+    let currentUser = null;
+ 
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = user;
+ 
+      try {
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        const userData = userSnap.exists() ? userSnap.data() : { targetHours: 60, role: 'user' };
+ 
+        if (userData.role === 'admin') {
+          document.getElementById('adminLink').style.display = 'flex';
+        }
+        document.getElementById('targetInput').value = userData.targetHours || 60;
+      } catch (err) {
+        console.error(err);
+      }
+    });
+ 
+    // ---------- เป้าหมายชั่วโมง ----------
+    const goalSuccess = document.getElementById('goalSuccess');
+    const goalError = document.getElementById('goalError');
+ 
+    document.getElementById('goalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('goalSaveBtn');
+      const target = parseInt(document.getElementById('targetInput').value, 10);
+ 
+      if (!target || target < 1) {
+        flash(goalSuccess, goalError, false, 'กรุณากรอกจำนวนชั่วโมงที่มากกว่า 0');
+        return;
+      }
+ 
+      btn.disabled = true;
+      btn.textContent = 'กำลังบันทึก...';
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), { targetHours: target });
+        flash(goalSuccess, goalError, true);
+      } catch (err) {
+        flash(goalSuccess, goalError, false, 'บันทึกไม่สำเร็จ: ' + err.message);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'บันทึกเป้าหมาย';
+      }
+    });
+ 
+    // ---------- เปลี่ยนรหัสผ่าน ----------
+    const pwSuccess = document.getElementById('pwSuccess');
+    const pwError = document.getElementById('pwError');
+ 
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('pwSaveBtn');
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+ 
+      if (!currentPassword || !newPassword) {
+        flash(pwSuccess, pwError, false, 'กรุณากรอกรหัสผ่านให้ครบ');
+        return;
+      }
+      if (newPassword.length < 6) {
+        flash(pwSuccess, pwError, false, 'รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร');
+        return;
+      }
+ 
+      btn.disabled = true;
+      btn.textContent = 'กำลังเปลี่ยนรหัสผ่าน...';
+      try {
+        const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, newPassword);
+        document.getElementById('passwordForm').reset();
+        flash(pwSuccess, pwError, true);
+      } catch (err) {
+        const msg = err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+          ? 'รหัสผ่านปัจจุบันไม่ถูกต้อง'
+          : 'เปลี่ยนรหัสผ่านไม่สำเร็จ: ' + err.message;
+        flash(pwSuccess, pwError, false, msg);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'เปลี่ยนรหัสผ่าน';
+      }
+    });
+  </script>
+ 
+</body>
+</html>
+ 
